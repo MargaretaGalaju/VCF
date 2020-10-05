@@ -35,8 +35,7 @@ export class AppComponent {
           Width: booth.YPosition * squareSize.Width,
         }
         
-        const newXPosition = Math.asin(30) * bigSquareSize.Width;
-        console.log(Math.asin(30));
+        const newXPosition = 0.5 * bigSquareSize.Width;
         const newYPosition = Math.sqrt(bigSquareSize.Height*bigSquareSize.Height + bigSquareSize.Width*bigSquareSize.Width);
         
         this.booths.push({
