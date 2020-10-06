@@ -5,13 +5,15 @@ import { VcfViewerLayoutComponent } from './feature/vcf-viewer/components/vcf-vi
 import {  HttpClientModule  } from '@angular/common/http';
 import { CanvasComponent } from './components/some-other/canvas/canvas.component';
 import { ZimjsComponent } from './components/some-other/zimjs/zimjs.component';
+import { P5jsComponent } from './components/some-other/p5js/p5js.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     VcfViewerLayoutComponent,
     CanvasComponent,
-    ZimjsComponent, 
+    ZimjsComponent,
+    P5jsComponent, 
   ],
   imports: [
     BrowserModule,
