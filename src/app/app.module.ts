@@ -6,6 +6,8 @@ import {  HttpClientModule  } from '@angular/common/http';
 import { CanvasComponent } from './components/some-other/canvas/canvas.component';
 import { ZimjsComponent } from './components/some-other/zimjs/zimjs.component';
 import { P5jsComponent } from './components/some-other/p5js/p5js.component';
+import { VcfGeneratorComponent } from './components/some-other/vcf-generator/vcf-generator.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -13,9 +15,11 @@ import { P5jsComponent } from './components/some-other/p5js/p5js.component';
     VcfViewerLayoutComponent,
     CanvasComponent,
     ZimjsComponent,
-    P5jsComponent, 
+    P5jsComponent,
+    VcfGeneratorComponent, 
   ],
   imports: [
+    ReactiveFormsModule,
     BrowserModule,
     HttpClientModule,
 

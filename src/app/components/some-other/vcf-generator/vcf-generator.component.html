@@ -1,0 +1,23 @@
+<form [formGroup]="vcfSettingsForm" (ngSubmit)="createSvg()">
+    <h3>Introduce booths count</h3>
+    
+    <label>
+        Small booths:
+        <input type="text" formControlName="small">
+    </label>
+    
+    <label>
+        Large booths:
+        <input type="text" formControlName="large">
+    </label>
+
+    <button type="submit">Create VCF</button>
+</form>
+
+<svg class="map" [attr.width]="vcfOutput.XSize*100" [attr.height]="vcfOutput.YSize*100">
+    <ng-container *ngFor="let booth of vcfOutput.Booths, let i = index">
+        <rect [attr.x]="booth.XPosition*100" [attr.y]="booth.YPosition*100" [attr.height]="booth.Align === 1 ? booth.Width*100 : booth.Height*100" 
+        [attr.width]="booth.Align === 1 ? booth.Height*100 : booth.Width*100" style="fill:white;stroke-width:3;stroke:rgb(0,0,0)">{{i}}</rect>/>
+        
+    </ng-container>
+</svg>
