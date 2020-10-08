@@ -8,6 +8,7 @@ import { ZimjsComponent } from './components/some-other/zimjs/zimjs.component';
 import { P5jsComponent } from './components/some-other/p5js/p5js.component';
 import { VcfGeneratorComponent } from './components/some-other/vcf-generator/vcf-generator.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SnapSvgComponent } from './components/some-other/snap-svg/snap-svg.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CanvasComponent,
     ZimjsComponent,
     P5jsComponent,
-    VcfGeneratorComponent, 
+    VcfGeneratorComponent,
+    SnapSvgComponent, 
   ],
   imports: [
     ReactiveFormsModule,

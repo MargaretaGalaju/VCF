@@ -29,14 +29,14 @@ export class P5jsComponent implements OnInit {
 
       const map = s => {
         s.setup = () => {
-          let canvas2 = s.createCanvas(screenWidth, screenHeight, s.WEBGL);
+          let canvas2 = s.createCanvas(screenWidth, screenHeight);
   
          this.squareSide = Math.sqrt(screenHeight*screenHeight + screenWidth*screenWidth)/2;
           this.tileSide = this.squareSide/this.mapConfigs.Map.XSize;
           
           canvas2.parent('sketch-holder');
   
-          s.translate(-screenWidth/2+30, 20);
+          s.translate(screenWidth*0.01, screenHeight*0.6);
   
           s.background('#ffffff');
           //draw shadow
@@ -106,56 +106,56 @@ export class P5jsComponent implements OnInit {
     //boothShadow
     canvas.fill('#89b2f1');
     canvas.translate(xPosition*this.tileSide, yPosition*this.tileSide);
-    canvas.rect(0, 0, boothWidth*this.tileSide, boothHeight*this.tileSide);
+    canvas.rect(0, 0, boothWidth*this.tileSide, boothHeight*this.tileSide, 5);
 
     //boothGround
     canvas.fill('#D3E4FA');
     canvas.translate(5,-5);
-    canvas.rect(0, 0, boothWidth*this.tileSide, boothHeight*this.tileSide);
+    canvas.rect(0, 0, boothWidth*this.tileSide, boothHeight*this.tileSide, 5);
 
     if (boothAlign === 'XAxis') {
       //imageKeeperBorder
       canvas.fill('#8ab2f1');
       canvas.translate(boothWidth*this.tileSide*0.1, boothWidth*this.tileSide*0.05);
-      canvas.rect(0, 0, boothWidth*this.tileSide*0.8, boothHeight*this.tileSide/4);
+      canvas.rect(0, 0, boothWidth*this.tileSide*0.8, boothHeight*this.tileSide/4, 5);
 
       //imageKeeper
       canvas.fill('#D3E4FA');
       canvas.translate(5,-5);
-      canvas.rect(0, 0, boothWidth*this.tileSide*0.8, boothHeight*this.tileSide/4);
+      canvas.rect(0, 0, boothWidth*this.tileSide*0.8, boothHeight*this.tileSide/4, 5);
 
       //imageWrapper
       canvas.fill('#D0D8E2');
       canvas.shearX(canvas.radians(130))
-      canvas.translate(boothWidth*this.tileSide*0.1, -boothHeight*this.tileSide+(boothHeight*this.tileSide*0.1))
-      canvas.rect(0, 0, boothWidth*this.tileSide*0.75, boothHeight*this.tileSide);
+      canvas.translate(boothWidth*this.tileSide*0.1, -boothHeight*this.tileSide+(boothHeight*this.tileSide*0.1), 5)
+      canvas.rect(0, 0, boothWidth*this.tileSide*0.75, boothHeight*this.tileSide, 5);
       
       //logo itself
       const outputImageAspectRatio = boothWidth*this.tileSide*0.75 /  boothHeight*this.tileSide;
       
-      canvas.image(image, 5, 5, boothWidth*this.tileSide*0.75, boothHeight*this.tileSide);
+      canvas.image(image, 5, 5, boothWidth*this.tileSide*0.75, boothHeight*this.tileSide, 5);
     }
      else {
       //imageKeeperBorder
       canvas.fill('#8ab2f1');
       canvas.translate(boothWidth*this.tileSide*0.6, boothWidth*this.tileSide*0.1);
-      canvas.rect(0, 0, boothWidth*this.tileSide*0.3, boothHeight*this.tileSide*0.9); 
+      canvas.rect(0, 0, boothWidth*this.tileSide*0.3, boothHeight*this.tileSide*0.9, 5); 
      
       //imageKeeper
       canvas.fill('#D3E4FA');
       canvas.translate(5,-5);
-      canvas.rect(0, 0, boothWidth*this.tileSide*0.3, boothHeight*this.tileSide*0.9); 
+      canvas.rect(0, 0, boothWidth*this.tileSide*0.3, boothHeight*this.tileSide*0.9, 5); 
 
       //imageWrapper
       canvas.fill('#D0D8E2');
       canvas.shearY(canvas.radians(-40))
       canvas.translate(boothWidth*this.tileSide*0.08, boothHeight*this.tileSide*0.1)
-      canvas.rect(0, 0, boothWidth*this.tileSide*1.15, boothHeight*this.tileSide*0.81);
+      canvas.rect(0, 0, boothWidth*this.tileSide*1.15, boothHeight*this.tileSide*0.81, 5);
       
       //logo itself
       
       canvas.rotate(canvas.radians(90))
-      canvas.image(image, -boothWidth*this.tileSide*0.03, -boothWidth*this.tileSide*1.1, boothHeight*this.tileSide*0.8, boothWidth*this.tileSide*1.1);
+      canvas.image(image, -boothWidth*this.tileSide*0.03, -boothWidth*this.tileSide*1.1, boothHeight*this.tileSide*0.8, boothWidth*this.tileSide*1.1, 5);
     }
 
     //Reset to previous saved positions
@@ -172,7 +172,7 @@ export class P5jsComponent implements OnInit {
     } 
              //Draw cube on the booth
     canvas.fill('#7faaef');
-    canvas.rect(-this.tileSide*0.01,-this.tileSide*0.21,this.tileSide*0.18,this.tileSide*0.18);
+    canvas.rect(-this.tileSide*0.01,-this.tileSide*0.21,this.tileSide*0.18,this.tileSide*0.18, 2);
     
     canvas.fill('#f4f8ff');
     canvas.rect(this.tileSide*0.295,-this.tileSide*0.46,this.tileSide*0.18,this.tileSide*0.18);
@@ -204,7 +204,6 @@ export class P5jsComponent implements OnInit {
     canvas.rect(-this.tileSide*0.15, -this.tileSide*0.5,this.tileSide*0.1,this.tileSide*0.2);
 
     canvas.pop();
-  
   }
 
   public getMapConfiguration(): Promise<any> {

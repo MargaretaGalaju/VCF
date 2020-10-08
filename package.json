@@ -19,8 +19,10 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "@types/snapsvg": "^0.5.0",
     "p5": "^1.1.9",
     "rxjs": "~6.4.0",
+    "snapsvg": "^0.5.1",
     "tslib": "^1.10.0",
     "zimjs": "^11.1.2",
     "zone.js": "~0.9.1"
