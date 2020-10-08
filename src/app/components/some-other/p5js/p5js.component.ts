@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import p5 from 'p5';
+import * as p5 from 'p5';
 
 @Component({
   selector: 'app-p5js',
@@ -22,22 +22,18 @@ export class P5jsComponent implements OnInit {
   ngOnInit() {
     this.getMapConfiguration().then((data)=> {
       this.mapConfigs = data;
-
       let screenWidth = window.innerWidth;
-
       let screenHeight = window.innerHeight;
-
       const map = s => {
         s.setup = () => {
           let canvas2 = s.createCanvas(screenWidth, screenHeight);
-  
-         this.squareSide = Math.sqrt(screenHeight*screenHeight + screenWidth*screenWidth)/2;
+          this.squareSide = Math.sqrt(screenHeight*screenHeight + screenWidth*screenWidth)/2;
           this.tileSide = this.squareSide/this.mapConfigs.Map.XSize;
-          
+            // this.squareSide = this.squareSide + + this.tileSide*0.2;
           canvas2.parent('sketch-holder');
-  
+    
           s.translate(screenWidth*0.01, screenHeight*0.6);
-  
+    
           s.background('#ffffff');
           //draw shadow
           let c = s.color('#E8ECF1');
@@ -50,33 +46,43 @@ export class P5jsComponent implements OnInit {
           s.square(0, 0, this.squareSide, 25);
           
           //draw border
-  
+
           let c2 = s.color('#C6D8EE');
           s.fill(c2);
           s.smooth();
           s.translate(50, -50);
           s.noStroke();
           s.square(0, 0, this.squareSide, 25);
-  
+
           //draw background
-  
+
           let c1 = s.color('#EDF5FF');
           s.noStroke();
           s.fill(c1);
           s.smooth();
           s.translate(20,-20);
-          s.square(0, 0, this.squareSide, 25);
-  
-          // for(let i = 0; i <= this.mapConfigs.Map.XSize; i++) {
-          //   for(let j = 0; j <= this.mapConfigs.Map.XSize; j++) {
-          //     s.stroke('purple'); 
-          //     s.strokeWeight(5); 
-          //     s.point(this.tileSide*(i), this.tileSide*(j));
-          //     s.noStroke();
-          //   }
-          // }
-        
-          s.translate(this.tileSide*0.2, this.tileSide*0.2)
+          let boothGround = s.square(0, 0, this.squareSide, 25);
+          
+          let boothGround1 = s.createElement('div', `lalal`).position(0,0);
+          boothGround1.style('color', 'red');
+           console.log(boothGround1);
+           
+          // canvas2.mouseOver(() => {
+          //   console.log(boothGround);
+          // });
+            s.mouseMoved = (e) => {
+              // console.log(e);
+            }
+            // for(let i = 0; i <= this.mapConfigs.Map.XSize; i++) {
+            //   for(let j = 0; j <= this.mapConfigs.Map.XSize; j++) {
+            //     s.stroke('purple'); 
+            //     s.strokeWeight(5); 
+            //     s.point(this.tileSide*(i), this.tileSide*(j));
+            //     s.noStroke();
+            //   }
+            // }
+          
+          s.translate(this.tileSide*0.2, this.tileSide*0.2);
           this.mapConfigs.Map.Booths.forEach((booth)=> {
             s.loadImage(booth.Logo, image => {   
               let boothHeight;
@@ -92,8 +98,7 @@ export class P5jsComponent implements OnInit {
               this.drawBooth(s, image, booth.XPosition, booth.YPosition, boothWidth, boothHeight, booth.Align);
             });
           })
-        };
-      };
+      }};
   
       this.canvas = new p5(map);
     });
@@ -106,8 +111,9 @@ export class P5jsComponent implements OnInit {
     //boothShadow
     canvas.fill('#89b2f1');
     canvas.translate(xPosition*this.tileSide, yPosition*this.tileSide);
-    canvas.rect(0, 0, boothWidth*this.tileSide, boothHeight*this.tileSide, 5);
-
+    let ps =canvas.rect(0, 0, boothWidth*this.tileSide, boothHeight*this.tileSide, 5);
+    console.log(ps);
+    
     //boothGround
     canvas.fill('#D3E4FA');
     canvas.translate(5,-5);
@@ -133,7 +139,7 @@ export class P5jsComponent implements OnInit {
       //logo itself
       const outputImageAspectRatio = boothWidth*this.tileSide*0.75 /  boothHeight*this.tileSide;
       
-      canvas.image(image, 5, 5, boothWidth*this.tileSide*0.75, boothHeight*this.tileSide, 5);
+      canvas.image(image, 10, 7, boothWidth*this.tileSide*0.75, boothHeight*this.tileSide, 5);
     }
      else {
       //imageKeeperBorder
@@ -180,6 +186,7 @@ export class P5jsComponent implements OnInit {
     canvas.fill('#d3e3f9');
     canvas.rect(this.tileSide*0.34,-this.tileSide*0.43,this.tileSide*0.1,this.tileSide*0.1);
 
+
     let redBoxStandColor = canvas.color('#ff7578');
     
     canvas.fill(redBoxStandColor);
@@ -187,25 +194,29 @@ export class P5jsComponent implements OnInit {
     
     redBoxStandColor.setAlpha(200);
     canvas.fill(redBoxStandColor);
-    canvas.rect(this.tileSide*0.595,-this.tileSide*0.625,this.tileSide*0.07,this.tileSide*0.078);
     
     canvas.fill('#b1cbf0');
     canvas.shearX(canvas.radians(130))
     canvas.rect(-this.tileSide*0.05, -this.tileSide*0.3, this.tileSide*0.18, this.tileSide*0.26);
-
-    canvas.fill(redBoxStandColor);
-    canvas.rect(-this.tileSide*0.05, -this.tileSide*0.55,this.tileSide*0.055,this.tileSide*0.2);
 
     canvas.fill('#e9f0fc');
     canvas.shearY(canvas.radians(40))
     canvas.rect(-this.tileSide*0.25, -this.tileSide*0.25, this.tileSide*0.2, this.tileSide*0.25); 
     
     canvas.fill(redBoxStandColor);
-    canvas.rect(-this.tileSide*0.15, -this.tileSide*0.5,this.tileSide*0.1,this.tileSide*0.2);
+    canvas.shearY(canvas.radians(-20))
 
+    canvas.translate(this.tileSide*0.01, -this.tileSide*0.05)
+    canvas.rect(-this.tileSide*0.17, -this.tileSide*0.5, this.tileSide*0.175, this.tileSide*0.2);
+
+    canvas.triangle(-this.tileSide*0.17, -this.tileSide*0.499, this.tileSide*0.005, -this.tileSide*0.5, -this.tileSide*0.08, -this.tileSide*0.551)
     canvas.pop();
   }
 
+  public lala() {
+    console.log('llaa;;a');
+    
+  }
   public getMapConfiguration(): Promise<any> {
     return new Promise((resolve, reject) => {
         this.http.get<any>('assets/resources/map_configuration.json').subscribe(result => {

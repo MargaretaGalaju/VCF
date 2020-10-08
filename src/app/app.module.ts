@@ -9,6 +9,7 @@ import { P5jsComponent } from './components/some-other/p5js/p5js.component';
 import { VcfGeneratorComponent } from './components/some-other/vcf-generator/vcf-generator.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SnapSvgComponent } from './components/some-other/snap-svg/snap-svg.component';
+import { SvgJsComponent } from './components/some-other/svg-js/svg-js.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { SnapSvgComponent } from './components/some-other/snap-svg/snap-svg.comp
     ZimjsComponent,
     P5jsComponent,
     VcfGeneratorComponent,
-    SnapSvgComponent, 
+    SnapSvgComponent,
+    SvgJsComponent, 
   ],
   imports: [
     ReactiveFormsModule,

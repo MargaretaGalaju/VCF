@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { userInfo } from 'os';
 import { Subject } from 'rxjs';
 
 export interface VcfInputModel {

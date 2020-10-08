@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as Snap from 'snapsvg';
+// import {Snap} from 'snapsvg';
 // declare var Snap: any;
 // declare var mina: any;
 @Component({
@@ -12,8 +12,8 @@ export class SnapSvgComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    const s = Snap('#test');
-    const c = s.circle(50, 50, 100);
+    // const s = Snap('#test');
+    // const c = s.circle(50, 50, 100);
   }
 
 }
