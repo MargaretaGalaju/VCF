@@ -10,6 +10,7 @@ import { VcfGeneratorComponent } from './components/some-other/vcf-generator/vcf
 import { ReactiveFormsModule } from '@angular/forms';
 import { SnapSvgComponent } from './components/some-other/snap-svg/snap-svg.component';
 import { SvgJsComponent } from './components/some-other/svg-js/svg-js.component';
+import { ThreeJsComponent } from './components/some-other/three-js/three-js.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { SvgJsComponent } from './components/some-other/svg-js/svg-js.component'
     P5jsComponent,
     VcfGeneratorComponent,
     SnapSvgComponent,
-    SvgJsComponent, 
+    SvgJsComponent,
+    ThreeJsComponent, 
   ],
   imports: [
     ReactiveFormsModule,

@@ -67,7 +67,7 @@ export class P5jsComponent implements OnInit {
           // boothGround1.style('color', 'red');
       
             s.mouseMoved = (e) => {
-              console.log(s.mouseX, s.mouseY);
+              // console.log(s.mouseX, s.mouseY);
             }
             // for(let i = 0; i <= this.mapConfigs.Map.XSize; i++) {
             //   for(let j = 0; j <= this.mapConfigs.Map.XSize; j++) {
@@ -213,6 +213,7 @@ export class P5jsComponent implements OnInit {
     console.log('llaa;;a');
     
   }
+  
   public getMapConfiguration(): Promise<any> {
     return new Promise((resolve, reject) => {
         this.http.get<any>('assets/resources/map_configuration.json').subscribe(result => {

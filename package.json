@@ -23,11 +23,13 @@
     "@types/p5": "^0.9.1",
     "@types/point-in-polygon": "^1.0.0",
     "@types/snapsvg": "^0.5.0",
+    "@types/three": "^0.103.2",
     "p5": "^1.1.9",
     "point-in-polygon": "^1.0.1",
     "rxjs": "~6.4.0",
     "snapsvg": "^0.5.1",
     "svg.draggable.js": "^3.0.0",
+    "three": "^0.121.1",
     "tslib": "^1.10.0",
     "zimjs": "^11.1.2",
     "zone.js": "~0.9.1"
