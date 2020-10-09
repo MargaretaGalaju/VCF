@@ -14,7 +14,7 @@
     },
     "Domain": "https://acme.com/vcf",
     "Map": {
-        "XSize": 2,
+        "XSize": 4,
         "YSize": 15,
         "Booths": [{
             "Name": "XOR",
@@ -39,7 +39,33 @@
             "Height": 1,
             "Align": "XAxis",
             "XPosition": 1,
-            "YPosition": 1,
+            "YPosition": 0,
+            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
+        },
+        {
+            "Name": "XOR",
+            "Size": "Small",
+            "Color": "ffffff",
+            "Target": "Landing",
+            "TargetId": "123456",
+            "Width": 1,
+            "Height": 1,
+            "Align": "YAxis",
+            "XPosition": 3,
+            "YPosition": 3,
+            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
+        },
+        {
+            "Name": "XOR",
+            "Size": "Small",
+            "Color": "ffffff",
+            "Target": "Landing",
+            "TargetId": "123456",
+            "Width": 1,
+            "Height": 1,
+            "Align": "YAxis",
+            "XPosition": 3,
+            "YPosition": 2,
             "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         }],
         "Visitors": [{

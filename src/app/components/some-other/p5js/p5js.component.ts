@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import * as p5 from 'p5';
+declare const inside;
 
 @Component({
   selector: 'app-p5js',
@@ -55,7 +56,6 @@ export class P5jsComponent implements OnInit {
           s.square(0, 0, this.squareSide, 25);
 
           //draw background
-
           let c1 = s.color('#EDF5FF');
           s.noStroke();
           s.fill(c1);
@@ -63,15 +63,11 @@ export class P5jsComponent implements OnInit {
           s.translate(20,-20);
           let boothGround = s.square(0, 0, this.squareSide, 25);
           
-          let boothGround1 = s.createElement('div', `lalal`).position(0,0);
-          boothGround1.style('color', 'red');
-           console.log(boothGround1);
-           
-          // canvas2.mouseOver(() => {
-          //   console.log(boothGround);
-          // });
+          // let boothGround1 = s.createElement('div', `lalal`).position(0,0);
+          // boothGround1.style('color', 'red');
+      
             s.mouseMoved = (e) => {
-              // console.log(e);
+              console.log(s.mouseX, s.mouseY);
             }
             // for(let i = 0; i <= this.mapConfigs.Map.XSize; i++) {
             //   for(let j = 0; j <= this.mapConfigs.Map.XSize; j++) {
