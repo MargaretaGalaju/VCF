@@ -172,7 +172,8 @@ export class P5jsComponent implements OnInit {
     } else {
       canvas.translate(xPosition*this.tileSide +(this.tileSide*boothWidth)/4, yPosition*this.tileSide+this.tileSide*boothHeight*0.5);
     } 
-             //Draw cube on the booth
+    
+    //Draw cube on the booth
     canvas.fill('#7faaef');
     canvas.rect(-this.tileSide*0.01,-this.tileSide*0.21,this.tileSide*0.18,this.tileSide*0.18, 2);
     

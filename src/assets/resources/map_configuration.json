@@ -14,74 +14,101 @@
     },
     "Domain": "https://acme.com/vcf",
     "Map": {
-        "XSize": 5,
-        "YSize": 15,
+        "XSize": 3,
+        "YSize": 10,
         "Booths": [{
-            "XPosition":1,"Align":"YAxis","YPosition":1,"Size":"Large","Height":1,"Width":2,"Name":"Xor",            "Color": "ffffff",
-            "Target": "Landing",
-            "TargetId": "123456",
-            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
-        },
-        {
-            "XPosition":2,"Align":"YAxis","YPosition":1,"Size":"Small","Height":1,"Width":1,"Name":"Xor",            "Color": "ffffff",
-            "Target": "Landing",
-            "TargetId": "123456",
-            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
-        },
-        {
-            "XPosition":1,"Align":"YAxis","YPosition":3,"Size":"Small","Height":1,"Width":1,"Name":"Xor",            "Color": "ffffff",
-            "Target": "Landing",
-            "TargetId": "123456",
-            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
-        },
-        {
-            "XPosition":2,"Align":"YAxis","YPosition":3,"Size":"Small","Height":1,"Width":1,"Name":"Xor",            "Color": "ffffff",
-            "Target": "Landing",
-            "TargetId": "123456",
-            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
-        },
-        {
-            "XPosition":3,"Align":"YAxis","YPosition":1,"Size":"Small","Height":1,"Width":1,"Name":"Xor",            "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
+            "XPosition":0,
+            "YPosition":0,
+            "Align":"YAxis",
+            "Size":"Large",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
             "Color": "ffffff",
             "Target": "Landing",
-            "TargetId": "123456"
+            "TargetId": "123456",
+            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         },
         {
-            "XPosition":2,"Align":"YAxis","YPosition":2,"Size":"Small","Height":1,"Width":1,"Name":"Xor",
+            "XPosition":1,
+            "YPosition":0,
+            "Align":"YAxis",
+            "Size":"Small",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
+            "Color": "ffffff",
+            "Target": "Landing",
+            "TargetId": "123456",
+            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
+        },
+        {
+            "XPosition":2,
+            "YPosition":0,
+            "Align":"YAxis",
+            "Size":"Small",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
+            "Color": "ffffff",
+            "Target": "Landing",
+            "TargetId": "123456",
+            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
+        },
+        {
+            "XPosition":2,
+            "YPosition":3,
+            "Align":"YAxis",
+            "Size":"Small",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
+            "Color": "ffffff",
+            "Target": "Landing",
+            "TargetId": "123456",
+            "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
+        },
+        {
+            "XPosition":3,
+            "YPosition":1,
+            "Align":"YAxis",
+            "Size":"Small",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
             "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
             "Color": "ffffff",
             "Target": "Landing",
             "TargetId": "123456"
         },
         {
-            "XPosition":3,"Align":"YAxis","YPosition":2,"Size":"Small","Height":1,"Width":1,"Name":"Xor" ,           "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
+            "XPosition":2,
+            "YPosition":2,
+            "Align":"YAxis",
+            "Size":"Small",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
+            "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
             "Color": "ffffff",
             "Target": "Landing",
             "TargetId": "123456"
-        }          
-        ],
-        "Visitors": [{
-            "Race": "White",
-            "RotationAngle": 90,
-            "Gender": "Male",
-            "XPosition": 2,
-            "YPosition": 1   
-        }],
-        "Furniture": [{
-            "Type": "Table",
-            "RotationAngle": 0,
-            "XPosition": 1,
-            "YPosition": 3
-        }],
-        "Tracks": [{
-            "XPosition1": 1,
-            "YPosition1": 1,
-            "XPosition2": 2,
-            "YPosition2": 1,
-            "Align1": "Center",
-            "Align2": "Center"
-        }]
-    },
+        },
+        {
+            "XPosition":3,
+            "YPosition":2,
+            "Align":"YAxis",
+            "Size":"Small",
+            "Height":1,
+            "Width":1,
+            "Name":"Xor",
+            "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
+            "Color": "ffffff",
+            "Target": "Landing",
+            "TargetId": "123456"
+        }
+    ]
+},
     "VisitorsNumber": 0.5,
     "GenderDistribution": 0.5,
     "RacialDistributionWhite": 0.3,
