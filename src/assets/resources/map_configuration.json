@@ -27,6 +27,7 @@
             "Color": "ffffff",
             "Target": "Landing",
             "TargetId": "123456",
+            "url":"https://landing.xor.ai/vacancy/208581",
             "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         },
         {
@@ -40,6 +41,7 @@
             "Color": "ffffff",
             "Target": "Landing",
             "TargetId": "123456",
+            "url":"https://landing.xor.ai/vacancy/131603",
             "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         },
         {
@@ -66,6 +68,7 @@
             "Color": "ffffff",
             "Target": "Landing",
             "TargetId": "123456",
+            "url":"https://landing.xor.ai/vacancy/131603",
             "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         },
         {
@@ -79,7 +82,8 @@
             "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
             "Color": "ffffff",
             "Target": "Landing",
-            "TargetId": "123456"
+            "TargetId": "123456",
+            "url":"https://landing.xor.ai/vacancy/869174"
         },
         {
             "XPosition":2,
@@ -92,7 +96,9 @@
             "Logo": "https://cdn.pizap.com/pizapfiles/images/logo_maker_design_app01.jpg",
             "Color": "ffffff",
             "Target": "Landing",
-            "TargetId": "123456"
+            "TargetId": "123456",
+            "url":"https://landing.xor.ai/vacancy/828997"
+
         }
     ]
 },
