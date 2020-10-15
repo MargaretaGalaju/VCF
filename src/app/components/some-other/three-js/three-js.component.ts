@@ -18,6 +18,8 @@ export class ThreeJsComponent {
 
   public controls;
 
+  public animatedElements = [];
+
   public controlsKeys = {
     LEFT: 37, 
     UP: 38, 
@@ -48,9 +50,13 @@ export class ThreeJsComponent {
       this.initSceneConfigurations();
       this.buildVcfGround();
 
-      this.drawBooth();
+      this.mapConfig.Map.Booths.forEach((booth)=>{
+        this.drawBooth(booth);
+
+      })
       
       this.render();
+      this.animate();
     });
   }
 
@@ -59,7 +65,7 @@ export class ThreeJsComponent {
     let YSize = this.mapConfig.Map.YSize;
 
     // this.renderer
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( this.renderer.domElement );
   
@@ -71,9 +77,10 @@ export class ThreeJsComponent {
     const d = XSize*0.6;
     
     this.camera = new THREE.OrthographicCamera( -d * aspect, d * aspect, d, -d, 0, 1000 );
-    this.camera.position.set( 12, 12, 12 );
-    
+    this.camera.position.set( 15, 15, 15 );
+
     this.camera.translateX( XSize/3 );
+    
     this.camera.translateY( -YSize*0.8 );
   
     this.controls = new OrbitControls( this.camera, this.renderer.domElement );
@@ -95,6 +102,16 @@ export class ThreeJsComponent {
   
   public render() {
     this.renderer.render( this.scene, this.camera );
+  } 
+
+  public animate() {
+    requestAnimationFrame(this.animate.bind(this));
+    
+    this.animatedElements.forEach((element)=> {
+      element.rotation.y +=0.01;
+    });
+
+    this.renderer.render( this.scene, this.camera );
   }
 
   public buildVcfGround() {
@@ -107,8 +124,7 @@ export class ThreeJsComponent {
     this.addBoxToScene('#C6D8EE', groundBorder, 0, -0.15, 0);
 
     const groundShade = this.getPlaneSquareShape(groundSquareSize, groundSquareSize, 0, 0.1);
-    this.addBoxToScene('#E8ECF1', groundShade, 0, -1, 0);
-
+    this.addBoxToScene('#E8ECF1', groundShade, 0, -0.5, 0);
   }
 
   public addBoxToScene(color: string, box, xPosition, yPosition, zPosition, rotateX = true) {
@@ -122,17 +138,14 @@ export class ThreeJsComponent {
     this.scene.add(boxMesh);
   }
 
-  public drawBooth() {
-    let boothWidth = this.mapConfig.Map.Booths[0].Width;
-    let boothHeight = this.mapConfig.Map.Booths[0].Height*0.8;
-    // let boothXPosition = this.mapConfig.Map.Booths[0].XPosition;
-    // let boothYPosition = this.mapConfig.Map.Booths[0].YPosition;
+  public drawBooth(booth) {
+    let boothWidth = booth.Width*0.9;
+    let boothHeight = booth.Height*0.8;
 
-    let boothXPosition = this.mapConfig.Map.Booths[0].XPosition + this.mapPadding/2;
-    let boothYPosition = this.mapConfig.Map.Booths[0].YPosition + this.mapPadding/2;
+    let boothXPosition = booth.XPosition + this.mapPadding/2;
+    let boothYPosition = booth.YPosition + this.mapPadding/2;
     
-
-    let boothAlignemnt = this.mapConfig.Map.Booths[0].Align;
+    let boothAlignment = booth.Align;
 
     const boothGroundBorder = this.getPlaneSquareShape(boothWidth, boothHeight, 0, 0.1);
     this.addBoxToScene('#89b2f1', boothGroundBorder, boothXPosition, 0, boothYPosition);
@@ -150,9 +163,9 @@ export class ThreeJsComponent {
     this.addBoxToScene('#D0D8E2', imageShade, boothXPosition+boothWidth*0.12, 0.075, boothYPosition+0.1, false);
     this.addBoxToScene('#D0D8E2', imageShade, boothXPosition+boothWidth*0.12, 0.06, boothYPosition+0.11, false);
 
-    new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU', (texture) => {
+    new THREE.TextureLoader().load('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTtMx1J4N4I0KXMVKvO9dSxK8ydQG4_SvFUpQ&usqp=CAU', (texture) => {
         const material = new THREE.MeshBasicMaterial({ 
-          map: texture
+          map: texture,
         });
         material.map.needsUpdate = true; 
 
@@ -161,42 +174,45 @@ export class ThreeJsComponent {
         this.scene.add(imageBox);
     });
 
-    const boxGroundBorder = this.getPlaneSquareShape(boothWidth*0.25, boothWidth*0.25, 0, 0);
-    this.addBoxToScene('#89b2f1', boxGroundBorder, boothXPosition+boothWidth*0.375, 0.05, boothYPosition+boothHeight*0.4);
+    const boxGroundBorder = this.getPlaneSquareShape(boothHeight*0.25, boothHeight*0.25, 0, 0);
+    this.addBoxToScene('#89b2f1', boxGroundBorder, boothXPosition+boothWidth*0.5-boothHeight*0.122, 0.05, boothYPosition+boothHeight*0.4);
     
-    const box = new THREE.BoxGeometry( boothWidth*0.25, boothWidth*0.25, boothWidth*0.25 );
-    box.faces[0].color.set('#d3e3f9');
-    box.faces[1].color.set('#d3e3f9');
-    box.faces[2].color.set('#f4f8ff');
-    box.faces[3].color.set('#f4f8ff');
-    box.faces[8].color.set('#e7eefb');
-    box.faces[9].color.set('#e7eefb');
-    box.colorsNeedUpdate = true;
+    const box = new THREE.BoxGeometry( boothHeight*0.25, boothHeight*0.25, boothHeight*0.25 );
+      box.faces[0].color.set('#d3e3f9');
+      box.faces[1].color.set('#d3e3f9');
+      box.faces[2].color.set('#f4f8ff');
+      box.faces[3].color.set('#f4f8ff');
+      box.faces[8].color.set('#e7eefb');
+      box.faces[9].color.set('#e7eefb');
+      box.colorsNeedUpdate = true;
     const mesh = new THREE.Mesh(box,  new THREE.MeshBasicMaterial( { color: '#f4f8ff', vertexColors: true } ));
     mesh.position.set(boothXPosition+boothWidth*0.5, 0.18, boothYPosition+boothHeight*0.55)
     this.scene.add(mesh);
 
-    const redSmallBox = new THREE.BoxGeometry( boothWidth*0.07, boothWidth*0.07, boothWidth*0.07 );
-    redSmallBox.faces[0].color.set('#ff2a47');
-    redSmallBox.faces[1].color.set('#ff2a47');
-    redSmallBox.faces[4].color.set('#ffadae');
-    redSmallBox.faces[5].color.set('#ffadae');
-    redSmallBox.faces[2].color.set('#ff897d');
-    redSmallBox.faces[3].color.set('#ff897d');
-    redSmallBox.faces[8].color.set('#ff5a73');
-    redSmallBox.faces[9].color.set('#ff5a73');
-    redSmallBox.colorsNeedUpdate = true;
+    const redSmallBox = new THREE.BoxGeometry( boothHeight*0.08, boothHeight*0.08, boothHeight*0.08 );
+      redSmallBox.faces[0].color.set('#ff2a47');
+      redSmallBox.faces[1].color.set('#ff2a47');
+      redSmallBox.faces[4].color.set('#ffadae');
+      redSmallBox.faces[5].color.set('#ffadae');
+      redSmallBox.faces[2].color.set('#ff897d');
+      redSmallBox.faces[3].color.set('#ff897d');
+      redSmallBox.faces[8].color.set('#ff5a73');
+      redSmallBox.faces[9].color.set('#ff5a73');
+      redSmallBox.colorsNeedUpdate = true;
     const redSmallBoxMesh = new THREE.Mesh(redSmallBox,  new THREE.MeshBasicMaterial( { color: '#ffadae', vertexColors: true } ));
-    redSmallBoxMesh.position.set(boothXPosition+boothWidth*0.5, 0.6, boothYPosition+boothHeight*0.55)
+    redSmallBoxMesh.position.set(boothXPosition+boothWidth*0.5, 0.50, boothYPosition+boothHeight*0.55);
+
+    this.animatedElements.push(redSmallBoxMesh);
     this.scene.add(redSmallBoxMesh);
     
     const redSmallBoxMesh2 = redSmallBoxMesh.clone();
-    redSmallBoxMesh2.position.set(boothXPosition+boothWidth*0.5, 0.4, boothYPosition+boothHeight*0.55)
+    redSmallBoxMesh2.position.set(boothXPosition+boothWidth*0.5, 0.35, boothYPosition+boothHeight*0.55)
+    this.animatedElements.push(redSmallBoxMesh2)
     this.scene.add(redSmallBoxMesh2);
 
-    const redBoxTransparent = new THREE.BoxGeometry( boothWidth*0.15, boothWidth*0.5, boothWidth*0.15 );
+    const redBoxTransparent = new THREE.BoxGeometry( boothHeight*0.17, boothHeight*0.5, boothHeight*0.17 );
     const redBoxTransparentMesh = new THREE.Mesh(redBoxTransparent,  new THREE.MeshBasicMaterial( { color: '#ff8e7d', vertexColors: true, opacity: 0.5, transparent: true } ));
-    redBoxTransparentMesh.position.set(boothXPosition+boothWidth*0.5, 0.18+boothWidth*0.25, boothYPosition+boothHeight*0.55)
+    redBoxTransparentMesh.position.set(boothXPosition+boothWidth*0.5, 0.18+boothHeight*0.25, boothYPosition+boothHeight*0.55)
     this.scene.add(redBoxTransparentMesh);
 
   }
