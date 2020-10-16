@@ -19,7 +19,7 @@
         "Booths": [{
             "XPosition":0,
             "YPosition":0,
-            "Align":"XAxis",
+            "Align":"YAxis",
             "Size":"Large",
             "Height":1,
             "Width":1,
@@ -31,9 +31,9 @@
             "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         },
         {
-            "XPosition":1,
-            "YPosition":0,
-            "Align":"XAxis",
+            "XPosition":0,
+            "YPosition":1,
+            "Align":"YAxis",
             "Size":"Small",
             "Height":1,
             "Width":1,
@@ -45,9 +45,9 @@
             "Logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTi4pVNK8iiO4td_J27vL--njgZC-KkyYUOKw&usqp=CAU"
         },
         {
-            "XPosition":2,
-            "YPosition":0,
-            "Align":"XAxis",
+            "XPosition":0,
+            "YPosition":2,
+            "Align":"YAxis",
             "Size":"Small",
             "Height":1,
             "Width":1,
@@ -59,8 +59,8 @@
         },
         {
             "XPosition":2,
-            "YPosition":3,
-            "Align":"YAxis",
+            "YPosition":0,
+            "Align":"XAxis",
             "Size":"Small",
             "Height":1,
             "Width":1,
@@ -73,8 +73,8 @@
         },
         {
             "XPosition":3,
-            "YPosition":1,
-            "Align":"YAxis",
+            "YPosition":0,
+            "Align":"XAxis",
             "Size":"Small",
             "Height":1,
             "Width":1,
@@ -88,7 +88,7 @@
         {
             "XPosition":2,
             "YPosition":2,
-            "Align":"YAxis",
+            "Align":"XAxis",
             "Size":"Small",
             "Height":1,
             "Width":2,
