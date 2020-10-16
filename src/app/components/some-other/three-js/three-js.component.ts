@@ -18,13 +18,13 @@ enum InitialColorsEnum {
   styleUrls: ['./three-js.component.scss']
 })
 export class ThreeJsComponent implements OnInit, AfterViewInit {
-  public renderer;
+  public renderer: THREE.WebGLRenderer;
 
-  public scene;
+  public scene: THREE.Scene;
 
-  public camera;
+  public camera: THREE.OrthographicCamera;
 
-  public controls;
+  public controls: OrbitControls;
 
   public animatedElements = [];
 
@@ -83,7 +83,6 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     this.raycaster = new THREE.Raycaster();
   }
 
-
   public ngAfterViewInit() {
     window.addEventListener( 'mousemove', this.onMouseMove.bind(this) ); 
     window.addEventListener( 'click', this.onMouseDown.bind(this)  );
@@ -101,27 +100,23 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     // this.scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color( 0xffffff );
+
     // this.camera
     const aspect = window.innerWidth / window.innerHeight;
-    const d = XSize*0.7;
+    const d = XSize*0.6;
     
     this.camera = new THREE.OrthographicCamera( -d * aspect, d * aspect, d, -d, 0, 1000 );
-    this.camera.position.set( -15, 15, 15 );
+    this.camera.position.set( XSize, XSize, XSize );
 
-    this.camera.translateX( XSize );
-    
-    this.camera.translateY(YSize);
-  
     this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-    this.controls.addEventListener( 'change', () => {
-      this.render();
-    });
 
     this.controls.enableZoom = true;
     this.controls.enablePan = false;
     this.controls.minPolarAngle = Math.PI / 3.25;
-    this.controls.maxPolarAngle = Math.PI / 2.25;
+    this.controls.maxPolarAngle = Math.PI / 3.25;
 
+    this.controls.enableRotate = false;
+    this.scene.translateY(XSize/1.75)
     // ambient
     this.scene.add( new THREE.AmbientLight( 0xffffff ) );
   
@@ -150,19 +145,20 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       const intersectedGroup = this.boothGroupArray.find((array)=> intersects[i].object.parent.uuid === array.uuid);
 
       if(intersectedGroup) {
-        console.log(intersectedGroup);
+        // console.log(intersectedGroup);
         intersectedGroup.children.forEach((child)=> {
           if(child.colorToChangeOnHover) {
             // child.material.color = child.colorToChangeOnHover;
           }
         })
-        window.open(intersectedGroup.url, '_blank');
+        window.open(intersectedGroup.userData.url, '_blank');
       }
     }
   } 
 
   public animate() {
     requestAnimationFrame(this.animate.bind(this));
+    console.log(this.camera);
     
     this.animatedElements.forEach((element)=> {
       element.rotation.y +=0.01;
@@ -297,10 +293,14 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     const redBoxTransparent = new THREE.BoxGeometry( boothHeight*0.17, boothHeight*0.5, boothHeight*0.17 );
     const redBoxTransparentMesh = new THREE.Mesh(redBoxTransparent,  new THREE.MeshBasicMaterial( { color: InitialColorsEnum.lightRed, vertexColors: true, opacity: 0.5, transparent: true } ));
     redBoxTransparentMesh.position.set(boothXPosition+boothWidth*0.5, 0.18+boothHeight*0.25, boothYPosition+boothHeight*0.55)
-    redBoxTransparentMesh.colorToChangeOnHover = '#95ffcc';
+    redBoxTransparentMesh.userData = {
+      colorToChangeOnHover: '#95ffcc',
+    }
     
     boothGroup.add(redBoxTransparentMesh);
-    boothGroup.url = booth.url; 
+    boothGroup.userData = {
+      url: booth.url,
+    } 
     this.boothGroupArray.push(boothGroup);
     
     this.scene.add(boothGroup)
