@@ -54,6 +54,8 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
   public mouse;
   
+  public test = [];
+
   public raycaster: THREE.Raycaster;
 
   constructor(
@@ -64,8 +66,8 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       this.initSceneConfigurations();
       this.buildVcfGround();
 
-      this.buildBooths()
-      
+      // this.buildBooths()
+      this.getGroundUnregularForm();
       this.render();
       this.animate();
     });
@@ -105,10 +107,8 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 //     let windowHalfY = window.innerHeight / 2;
 //     const aspect = window.innerWidth / window.innerHeight;
 //     const d = this.mapConfig.Map.XSize*0.6;
-    
 //     // this.camera = new THREE.OrthographicCamera( -d * aspect, d * aspect, d, -d, 0, 1000 );
 //     this.camera.updateProjectionMatrix();
-
 //     this.renderer.setSize(window.innerWidth, window.innerHeight);					
 // }
 
@@ -132,7 +132,7 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     this.camera = new THREE.OrthographicCamera( -d * aspect, d * aspect, d, -d, 0, 1000 );
     this.camera.position.set( XSize, XSize, XSize );
 
-    // camera.lookAt(scene.position);
+    this.camera.lookAt(XSize, 0, XSize);
 
     this.controls = new OrbitControls( this.camera, this.renderer.domElement );
 
@@ -141,8 +141,13 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     this.controls.minPolarAngle = Math.PI / 3.25;
     this.controls.maxPolarAngle = Math.PI / 3.25;
 
-    this.controls.enableRotate = false;
-    this.scene.translateY(XSize/1.75)
+    // this.controls.enableRotate = false;
+
+
+    this.scene.translateY(XSize/1.75);
+
+
+
     // ambient
     this.scene.add( new THREE.AmbientLight( 0xffffff ) );
   
@@ -184,7 +189,6 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
   public animate() {
     requestAnimationFrame(this.animate.bind(this));
-    console.log(this.camera);
     
     this.animatedElements.forEach((element)=> {
       element.rotation.y +=0.01;
@@ -334,18 +338,19 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
   }
 
   public getPlaneSquareShape(XSize, YSize, depth, radius) {
-    let startXPosition = 0;
-    let startYPosition = 0;
     const shape = new THREE.Shape();
-    shape.moveTo(startXPosition, YSize*radius+startYPosition);
-    shape.lineTo(startXPosition, YSize - YSize*radius+startYPosition);
-    shape.bezierCurveTo(startXPosition, YSize - YSize*radius+startYPosition, startXPosition, YSize+startYPosition, XSize*radius+startXPosition, YSize+startYPosition);
-    shape.lineTo(XSize - XSize*radius+startXPosition, YSize+startYPosition);
-    shape.bezierCurveTo(XSize - XSize*radius +startXPosition, YSize+startYPosition, XSize+startXPosition, YSize+startYPosition, XSize+startXPosition, YSize - YSize*radius+startYPosition);
-    shape.lineTo(XSize+startXPosition, YSize*radius+startYPosition);
-    shape.bezierCurveTo(XSize+startXPosition, YSize*radius+startYPosition, XSize+startXPosition, startYPosition, XSize - XSize*radius+startXPosition, startYPosition);
-    shape.lineTo(XSize*radius+startXPosition, startYPosition);
-    shape.bezierCurveTo(XSize*radius+startXPosition, startYPosition, startXPosition, startYPosition, startXPosition, YSize*radius+startYPosition);
+
+    shape.lineTo(0, YSize - YSize*radius);
+    shape.bezierCurveTo(0, YSize - YSize*radius, 0, YSize, XSize*radius, YSize);
+    
+    shape.lineTo(XSize - XSize*radius, YSize);
+    shape.bezierCurveTo(XSize - XSize*radius , YSize, XSize, YSize, XSize, YSize - YSize*radius);
+    
+    shape.lineTo(XSize, YSize*radius);
+    shape.bezierCurveTo(XSize, YSize*radius, XSize, 0, XSize - XSize*radius, 0);
+    
+    shape.lineTo(XSize*radius, 0);
+    shape.bezierCurveTo(XSize*radius, 0, 0, 0, 0, YSize*radius);
 
     const extrudeSettings = {
         steps: 0, 
@@ -359,6 +364,222 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     return geometry;
+  }
+
+
+  public getGroundUnregularForm() {
+    let currentDirection = 'bottom';
+    let XSize = 4;
+    let YSize = 4;
+
+    let cutsOff = [
+      // {
+      //   x: 1,
+      //   y: 3
+      // },
+      {
+        x: 2,
+        y: 3,
+      },
+      {
+        x: 3,
+        y: 1,
+      },
+      {
+        x: 3,
+        y: 3,
+      },
+      {
+        x: 3,
+        y: 2,
+      },
+    ];
+
+    const shape = new THREE.Shape();
+    let matrix = new Array(XSize);
+
+    for (let i = 0; i < matrix.length; i++) { 
+      matrix[i] = new Array(YSize); 
+    }
+
+    for (let i = 0; i < YSize; i++) {
+      for (let j = 0; j < XSize; j++) {
+        let isCutOff = cutsOff.some((cutOff)=> cutOff.x === i && cutOff.y === j);
+        matrix[i][j] = isCutOff ? 0 : 1;
+      }
+    }
+    // console.log(matrix);
+    
+    this.test = [[0, 0]];
+
+    let positionX = 0;
+    let positionY = 0;
+
+    for (let i = positionX; i < XSize; i++) {
+      positionX = i;
+      if (matrix[positionX][positionY]) {
+        this.test.push([positionX + 1, positionY]);
+        // if(matrix[positionX+1]) {
+        //   this.checkIfVectorHasBeenChanged(
+        //     this.test[this.test.length-2],
+        //     this.test[this.test.length-1], 
+        //     matrix[positionX+1][positionY], 
+        //     'y',
+        //   );
+        // }
+      } else {
+        positionY++;
+        positionX--;
+        i--;
+        this.test.push([positionX + 1, positionY]);
+      }
+    }
+
+    for (let i = positionY; i < YSize; i++) {
+      positionY = i;
+      
+      if (matrix[positionX][positionY]) {
+        this.test.push([positionX + 1, positionY + 1]);
+        
+        // if(matrix[positionX]) {
+        //   this.checkIfVectorHasBeenChanged(
+        //     this.test[this.test.length-2], 
+        //     this.test[this.test.length-1], 
+        //     matrix[positionX][positionY+1],
+        //     'x',
+        //     );
+        // }
+      } else {
+        positionX--;
+        positionY--;
+        i--;
+
+        this.test.push([positionX + 1, positionY + 1]);
+        // if(matrix[positionX-1]) {
+        //   this.checkIfVectorHasBeenChanged(
+        //     this.test[this.test.length-2],
+        //     this.test[this.test.length-1], 
+        //     matrix[positionX-1][positionY-1],
+        //     'y'
+        //   );
+        // }
+      }
+    }
+
+    for (let i = positionX; i >= 0; i--) {
+      positionX = i;
+      
+      if(matrix[positionX][positionY]) {
+        this.test.push([positionX, positionY + 1]);
+      } else {
+        positionX++;
+        positionY--;
+        i++;
+        
+        this.test.push([positionX, positionY + 1]);
+      }
+    }
+
+    for (let i = positionY; i >= 0; i--) {
+      positionY = i;
+
+      if(matrix[positionX][positionY]) {
+        this.test.push([positionX, positionY]);
+        
+        // if(matrix[positionX]) {
+        //   this.checkIfVectorHasBeenChanged(
+        //     this.test[this.test.length-2],
+        //     this.test[this.test.length-1], 
+        //     matrix[positionX][positionY-1],
+        //     'x'
+        //   );
+        // }
+      } else {
+        positionX++;
+        positionY++;
+        i++;
+        this.test.push([positionX, positionY]);
+      }
+    }
+
+    console.log(this.test);
+
+    this.test.forEach(([xPos, yPos])=> {
+      let radius = 0.8;
+      // shape.lineTo(xPos, yPos);
+      // shape.bezierCurveTo(xPos, yPos*radius, xPos, yPos, xPos+xPos*radius, yPos);
+    });
+
+    const vectorsArray = [];
+
+    
+    this.test.forEach((value, index) => {
+      if (index === this.test.length-1) {
+        return;
+      }
+      let a = new THREE.Vector3(value[0], value[1], 0);
+      let b = new THREE.Vector3(this.test[index+1][0], this.test[index+1][1], 0);
+      const dir = new THREE.Vector3()
+      const lala = dir.subVectors(b, a).normalize();
+      vectorsArray.push(lala);
+    });
+
+    console.log(vectorsArray);
+    
+    
+    let xPos = 0;
+    let yPos = 0;
+    let radius = 0.2;
+
+    vectorsArray.forEach((vector: THREE.Vector3, index)=> {
+      xPos = xPos + vector.x;
+      yPos = yPos + vector.y;
+      if (index === vectorsArray.length - 1 || vector.equals(vectorsArray[index + 1])) {
+        shape.lineTo(xPos, yPos);
+      } else {
+        shape.lineTo(xPos, yPos);
+        if(vectorsArray[index + 1].y) {
+            // shape.lineTo(xPos, yPos - yPos*radius);
+            // shape.bezierCurveTo(xPos, yPos - yPos*radius, xPos, yPos, xPos + xPos*radius, yPos);
+          }
+        }
+      })
+      
+      //   // shape.lineTo(xPos, yPos - yPos*radius);
+      //   // shape.lineTo(0, );
+      //   // shape.bezierCurveTo(xPos, yPos - yPos*radius, xPos, yPos, xPos*radius, yPos);
+    
+    const extrudeSettings = {
+      steps: 0, 
+      depth: 0,
+      bevelEnabled: false,
+      bevelThickness: 0.9, 
+      bevelSize: 0.9,
+      bevelSegments: 20,
+      curveSegments: 10,
+    };
+
+    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+
+    const material = new THREE.MeshLambertMaterial({
+      color: new THREE.Color("#000000").clone(),
+    });
+
+    const boxMesh = new THREE.Mesh(geometry, material);
+    boxMesh.rotateX(Math.PI/2);
+    this.scene.add(boxMesh);
+  }
+
+  public checkIfVectorHasBeenChanged(previousPoint: number[], currentPoint: number[], nextCellExists, incrementDirection: 'x' | 'y') {
+    if(incrementDirection === 'y') {
+      if(previousPoint[1] === currentPoint[1] && nextCellExists){
+        this.test.pop();
+      }
+    } else {
+      if(previousPoint[0] === currentPoint[0] && nextCellExists){
+        this.test.pop();
+      }
+    }
   }
 
   public getMapConfiguration(): Promise<any> {
