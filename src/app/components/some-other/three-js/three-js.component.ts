@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ExtrudeGeometryOptions } from 'three/src/geometries/ExtrudeBufferGeometry';
-
+import * as TWEEN from 'tween.js/src/Tween.js'
 enum InitialColorsEnum {
   darkRed  = '#ff897d',
   lightRed = '#ffadae',
@@ -28,31 +28,15 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
   public animatedElements = [];
 
-  public controlsKeys = {
-    LEFT: 37, 
-    UP: 38, 
-    RIGHT: 39, 
-    BOTTOM: 40,
-  }
-
-  public  map404 = [
-    [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0],
-    [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0],
-    [1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1],
-    [0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0]
-  ];
-
   public boxes = [];
 
   public mapConfig;
 
   public mapPadding = 0.5;
 
-  public boothGroupArray = [];
+  public boothGroupArray: THREE.Object3D[] = [];
 
-  public mouse;
+  public mouse: THREE.Vector2;
   
   public raycaster: THREE.Raycaster;
 
@@ -136,13 +120,13 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
     this.controls.enableZoom = true;
     this.controls.enablePan = false;
-    this.controls.minPolarAngle = Math.PI / 3.25;
-    this.controls.maxPolarAngle = Math.PI / 3.25;
+    // this.controls.minPolarAngle = Math.PI / 3.25;
+    // this.controls.maxPolarAngle = Math.PI / 3.25;
 
     // this.controls.enableRotate = false;
     this.scene.translateY(XSize/1.75);
-
-    this.scene.add( new THREE.AmbientLight( 0xffffff ) );
+    const ambientLight = new THREE.AmbientLight( 0xffffff );
+    this.scene.add( ambientLight );
   }
   
   public render() {
@@ -162,16 +146,12 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
     let intersects = this.raycaster.intersectObjects( this.scene.children , true );
     
+    
     for ( let i = 0; i < intersects.length; i++ ) {
-      const intersectedGroup = this.boothGroupArray.find((array)=> intersects[i].object.parent.uuid === array.uuid);
+      const intersectedGroup = this.boothGroupArray.find((array) => intersects[i].object.parent.uuid === array.uuid);
 
       if(intersectedGroup) {
-        // console.log(intersectedGroup);
-        intersectedGroup.children.forEach((child)=> {
-          if(child.colorToChangeOnHover) {
-            // child.material.color = child.colorToChangeOnHover;
-          }
-        })
+        
         window.open(intersectedGroup.userData.url, '_blank');
       }
     }
@@ -179,24 +159,37 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
   public animate() {
     requestAnimationFrame(this.animate.bind(this));
-    
+
     this.animatedElements.forEach((element)=> {
       element.rotation.y +=0.01;
     });
 
     this.raycaster.setFromCamera( this.mouse, this.camera );
 
-    let intersects = this.raycaster.intersectObjects( this.scene.children , true );
+    let intersects = this.raycaster.intersectObjects( this.boothGroupArray , true );
     
-    for ( let i = 0; i < intersects.length; i++ ) {
-      const intersectedGroup = this.boothGroupArray.find((array)=> intersects[i].object.parent.uuid === array.uuid);
+    let lastIntersected: THREE.Object3D;
 
-      if(intersectedGroup) {
-        console.log(intersectedGroup);
-        // intersectedGroup.scale.set(1.2,1,1.2)
+    if (intersects.length > 0) {
+      const intersectedGroup: THREE.Object3D = this.boothGroupArray.find((array) => intersects[0].object.parent.uuid === array.uuid);
+      if(intersectedGroup && intersectedGroup.uuid) {
+        if (lastIntersected && intersectedGroup.uuid !== lastIntersected.uuid ) {
+          console.log('////'+lastIntersected.uuid,'/////'+ intersectedGroup.uuid);
+          lastIntersected.userData.scaleDown(lastIntersected);
+        }
+
+        lastIntersected = intersectedGroup;
+        lastIntersected.userData.scaleUp(lastIntersected);
+      } else {
+        lastIntersected = null;
       }
+    }  else {
+      if (lastIntersected) {
+        lastIntersected.userData.scaleDown(lastIntersected);
+      }
+      lastIntersected = null;
     }
-      
+
     this.renderer.render( this.scene, this.camera );
   }
 
@@ -213,7 +206,7 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     groundObject.add(this.createMesh('#E8ECF1', groundShade, 0, -0.5, 0));
 
     groundObject.scale.set(1.15, 1, 1.15);
-    groundObject.translateX(-0.2);
+    groundObject.translateX(-0.4);
     groundObject.translateZ(-0.2);
     this.scene.add(groundObject);
   }
@@ -247,19 +240,19 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     let boothWidth = booth.Width*0.9;
     let boothHeight = booth.Height*0.8;
 
-    const boothGroundBorder = this.getPlaneSquareShape(boothWidth, boothHeight, 0, 0.1);
+    const boothGroundBorder = this.getPlaneSquareShape(boothWidth, boothHeight, 0.1, 0.1);
     boothGroup.add(this.createMesh('#89b2f1', boothGroundBorder, 0, 0, 0));
 
-    const boothGround = this.getPlaneSquareShape(boothWidth, boothHeight, 0, 0.1);
+    const boothGround = this.getPlaneSquareShape(boothWidth, boothHeight, 0.1, 0.1);
     boothGroup.add(this.createMesh('#D3E4FA', boothGround, 0, 0.025, 0));
 
-    const imageStandBorder = this.getPlaneSquareShape(boothWidth*0.8, boothHeight*0.3, 0, 0.1);
+    const imageStandBorder = this.getPlaneSquareShape(boothWidth*0.8, boothHeight*0.3, 0.1, 0.1);
     boothGroup.add(this.createMesh('#89b2f1', imageStandBorder, boothWidth*0.1, 0.050, 0));
 
-    const imageStandGround = this.getPlaneSquareShape(boothWidth*0.8, boothHeight*0.3, 0, 0.1);
+    const imageStandGround = this.getPlaneSquareShape(boothWidth*0.8, boothHeight*0.3, 0.1, 0.1);
     boothGroup.add(this.createMesh('#D3E4FA', imageStandGround, boothWidth*0.1, 0.075, 0));
 
-    const imageShade = this.getPlaneSquareShape(boothWidth*0.76, boothHeight*0.8, 0, 0.1);
+    const imageShade = this.getPlaneSquareShape(boothWidth*0.76, boothHeight*0.8, 0.1, 0.1);
     boothGroup.add(this.createMesh('#D0D8E2', imageShade, boothWidth*0.12, 0.075, 0.1, false));
     boothGroup.add(this.createMesh('#D0D8E2', imageShade, boothWidth*0.12, 0.06, 0.11, false));
 
@@ -275,20 +268,21 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
         boothGroup.add(imageBox);
     });
 
-    const boxGroundBorder = this.getPlaneSquareShape(boothHeight*0.25, boothHeight*0.25, 0, 0);
-    boothGroup.add(this.createMesh('#89b2f1', boxGroundBorder, boothWidth*0.5-boothHeight*0.122, 0.05, boothHeight*0.4));
+    const boxGroundBorder = new THREE.BoxGeometry( boothHeight*0.26, boothHeight*0.05, boothHeight*0.26 );
+    const boxGroundBorderMesh = this.createMesh('#89b2f1', boxGroundBorder, 0, 0, 0, false);
+    boxGroundBorderMesh.position.set(boothWidth*0.5, 0.02, boothHeight*0.55);
+    boothGroup.add(boxGroundBorderMesh);
     
-    
-    const box = new THREE.BoxGeometry( boothHeight*0.25, boothHeight*0.25, boothHeight*0.25 );
-      box.faces[0].color.set('#d3e3f9');
-      box.faces[1].color.set('#d3e3f9');
-      box.faces[2].color.set('#f4f8ff');
-      box.faces[3].color.set('#f4f8ff');
-      box.faces[8].color.set('#e7eefb');
-      box.faces[9].color.set('#e7eefb');
-      box.colorsNeedUpdate = true;
+    const box = new THREE.BoxGeometry( boothHeight*0.25, boothHeight*0.4, boothHeight*0.25 );
+    box.faces[0].color.set('#d3e3f9');
+    box.faces[1].color.set('#d3e3f9');
+    box.faces[2].color.set('#f4f8ff');
+    box.faces[3].color.set('#f4f8ff');
+    box.faces[8].color.set('#e7eefb');
+    box.faces[9].color.set('#e7eefb');
+    box.colorsNeedUpdate = true;
     const mesh = new THREE.Mesh(box,  new THREE.MeshBasicMaterial( { color: '#f4f8ff', vertexColors: true } ));
-    mesh.position.set(boothWidth*0.5, 0.18, boothHeight*0.55);
+    mesh.position.set(boothWidth*0.5, 0.05, boothHeight*0.55);
     boothGroup.add(mesh);
 
     const redSmallBox = new THREE.BoxGeometry( boothHeight*0.08, boothHeight*0.08, boothHeight*0.08 );
@@ -321,6 +315,28 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     boothGroup.add(redBoxTransparentMesh);
     boothGroup.userData = {
       url: booth.url,
+      scaleUp:(bth:THREE.Object3D) =>{
+        // console.log("scaleUp"+bth);
+        bth.scale.set(1.1,1,1.1)
+        // if (h.userData.scaleDownTween) h.userData.scaleDownTween.stop();
+        // let initScale = h.scale.clone();
+        // let finalScale = new THREE.Vector3().setScalar(2);
+        // h.userData.scaleUpTween = new TWEEN.Tween(initScale).to(finalScale, 500).onUpdate(function(obj) {
+        //   h.scale.copy(obj)
+        // }).start();
+      },
+
+      scaleDown: (bth) => {
+        // console.log("scaleDown"+bth);
+        bth.scale.set(0.9,1,0.9)
+
+        // if (h.userData.scaleUpTween) h.userData.scaleUpTween.stop();
+        // let initScale = h.scale.clone();
+        // let finalScale = new THREE.Vector3().setScalar(1);
+        // h.userData.scaleUpTween = new TWEEN.Tween(initScale).to(finalScale, 500).onUpdate(function(obj) {
+        //   h.scale.copy(obj)
+        // }).start();
+      },
     } 
 
     this.boothGroupArray.push(boothGroup);
@@ -344,14 +360,13 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     shape.bezierCurveTo(XSize*radius, 0, 0, 0, 0, YSize*radius);
 
     const extrudeSettings = {
-        steps: 0, 
+       steps: 0, 
         depth: depth,
         bevelEnabled: false,
         bevelThickness: 0.9, 
         bevelSize: 0.9,
         bevelSegments: 20,
-        curveSegments: 10,
-    };
+        curveSegments: 10,    };
 
     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     return geometry;
@@ -362,7 +377,7 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     let YSize = this.mapConfig.Map.YSize;
 
     let cutsOff = this.mapConfig.CutsOff;
-    let radius = 0.3;
+    let radius = 0.2;
 
     const shape = new THREE.Shape();
     let matrix = new Array(XSize);
