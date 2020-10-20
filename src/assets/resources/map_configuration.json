@@ -15,7 +15,7 @@
     "Domain": "https://acme.com/vcf",
     "Map": {
         "XSize": 4,
-        "YSize": 10,
+        "YSize": 4,
         "Booths": [{
             "XPosition":0,
             "YPosition":0,
@@ -88,7 +88,7 @@
         {
             "XPosition":2,
             "YPosition":2,
-            "Align":"XAxis",
+            "Align":"YAxis",
             "Size":"Small",
             "Height":1,
             "Width":2,
@@ -118,5 +118,23 @@
         "EmailSubject": "Reminder",
         "EmailBody": "VCF Event will start in 2 hours",
         "SMSBody": "VCF Event will start in 2 hours"
-    }]
+    }],
+    "CutsOff" : [
+        {
+          "x": 2,
+          "y": 3
+        },
+        {
+          "x": 3,
+          "y": 1
+        },
+        {
+          "x": 3,
+          "y": 3
+        },
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
 }

@@ -54,8 +54,6 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
   public mouse;
   
-  public test = [];
-
   public raycaster: THREE.Raycaster;
 
   constructor(
@@ -64,10 +62,10 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     this.getMapConfiguration().then((data)=> {
       this.mapConfig = data;
       this.initSceneConfigurations();
-      this.buildVcfGround();
 
-      // this.buildBooths()
-      this.getGroundUnregularForm();
+      this.buildVcfGround();
+      this.buildBooths()
+
       this.render();
       this.animate();
     });
@@ -142,17 +140,9 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     this.controls.maxPolarAngle = Math.PI / 3.25;
 
     // this.controls.enableRotate = false;
-
-
     this.scene.translateY(XSize/1.75);
 
-
-
-    // ambient
     this.scene.add( new THREE.AmbientLight( 0xffffff ) );
-  
-    // axes
-    // this.scene.add( new THREE.AxesHelper( 40 ) ); 
   }
   
   public render() {
@@ -202,7 +192,8 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       const intersectedGroup = this.boothGroupArray.find((array)=> intersects[i].object.parent.uuid === array.uuid);
 
       if(intersectedGroup) {
-        // console.log(intersectedGroup);
+        console.log(intersectedGroup);
+        // intersectedGroup.scale.set(1.2,1,1.2)
       }
     }
       
@@ -210,22 +201,28 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
   }
 
   public buildVcfGround() {
-    let groundSquareSize = this.mapConfig.Map.XSize + this.mapPadding;
-    
-    const ground = this.getPlaneSquareShape(groundSquareSize, groundSquareSize, 0.1, 0.1);
-    this.addBoxToScene('#EDF5FF', ground, 0, -0.1, 0);
+    const groundObject = new THREE.Object3D();
 
-    const groundBorder = this.getPlaneSquareShape(groundSquareSize, groundSquareSize, 0.1, 0.1);
-    this.addBoxToScene('#C6D8EE', groundBorder, 0, -0.15, 0);
+    const ground = this.getGroundUnregularGeometry();
+    groundObject.add(this.createMesh('#EDF5FF', ground, 0, -0.1, 0));
 
-    const groundShade = this.getPlaneSquareShape(groundSquareSize, groundSquareSize, 0, 0.1);
-    this.addBoxToScene('#E8ECF1', groundShade, 0, -0.5, 0);
+    const groundBorder = this.getGroundUnregularGeometry();
+    groundObject.add(this.createMesh('#C6D8EE', groundBorder, 0, -0.15, 0));
+
+    const groundShade = this.getGroundUnregularGeometry();
+    groundObject.add(this.createMesh('#E8ECF1', groundShade, 0, -0.5, 0));
+
+    groundObject.scale.set(1.15, 1, 1.15);
+    groundObject.translateX(-0.2);
+    groundObject.translateZ(-0.2);
+    this.scene.add(groundObject);
   }
 
-  public addBoxToScene(color: string, box, xPosition, yPosition, zPosition, rotateX = true, groupToAdd = null){
+  public addBoxToScene(color: string, box, xPosition, yPosition, zPosition, rotateX = true){
     const material = new THREE.MeshLambertMaterial({
       color: new THREE.Color(color).clone(),
     });
+
     const boxMesh = new THREE.Mesh(box, material);
     boxMesh.rotation.x = rotateX ? Math.PI / 2 : 0;
 
@@ -249,11 +246,6 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
     let boothWidth = booth.Width*0.9;
     let boothHeight = booth.Height*0.8;
-
-    // let 0 = booth.XPosition + this.mapPadding/2;
-    // let 0 = booth.YPosition + this.mapPadding/2;
-    
-    let boothAlignment = booth.Align;
 
     const boothGroundBorder = this.getPlaneSquareShape(boothWidth, boothHeight, 0, 0.1);
     boothGroup.add(this.createMesh('#89b2f1', boothGroundBorder, 0, 0, 0));
@@ -308,7 +300,6 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     });
     redSmallBox.colorsNeedUpdate = true;
     const redSmallBoxMesh = new THREE.Mesh(redSmallBox,  new THREE.MeshBasicMaterial( { color: InitialColorsEnum.lightRed, vertexColors: true } ));
-    //be able to change color
 
     redSmallBoxMesh.position.set(boothWidth*0.5, 0.50, boothHeight*0.55);
     this.animatedElements.push(redSmallBoxMesh);
@@ -365,73 +356,43 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     return geometry;
   }
+  
+  public getGroundUnregularGeometry() {
+    let XSize = this.mapConfig.Map.XSize;
+    let YSize = this.mapConfig.Map.YSize;
 
-
-  public getGroundUnregularForm() {
-    let currentDirection = 'bottom';
-    let XSize = 4;
-    let YSize = 4;
-
-    let cutsOff = [
-      // {
-      //   x: 1,
-      //   y: 3
-      // },
-      {
-        x: 2,
-        y: 3,
-      },
-      {
-        x: 3,
-        y: 1,
-      },
-      {
-        x: 3,
-        y: 3,
-      },
-      {
-        x: 3,
-        y: 2,
-      },
-    ];
+    let cutsOff = this.mapConfig.CutsOff;
+    let radius = 0.3;
 
     const shape = new THREE.Shape();
     let matrix = new Array(XSize);
+    
+    let positionX = 0;
+    let positionY = 0;
+
+    const shapeCoordinates = [[positionX, positionY]];
+    const vectorsArray = [];
 
     for (let i = 0; i < matrix.length; i++) { 
       matrix[i] = new Array(YSize); 
     }
 
-    for (let i = 0; i < YSize; i++) {
-      for (let j = 0; j < XSize; j++) {
+    for (let i = 0; i < XSize; i++) {
+      for (let j = 0; j < YSize; j++) {
         let isCutOff = cutsOff.some((cutOff)=> cutOff.x === i && cutOff.y === j);
         matrix[i][j] = isCutOff ? 0 : 1;
       }
     }
-    // console.log(matrix);
-    
-    this.test = [[0, 0]];
-
-    let positionX = 0;
-    let positionY = 0;
 
     for (let i = positionX; i < XSize; i++) {
       positionX = i;
       if (matrix[positionX][positionY]) {
-        this.test.push([positionX + 1, positionY]);
-        // if(matrix[positionX+1]) {
-        //   this.checkIfVectorHasBeenChanged(
-        //     this.test[this.test.length-2],
-        //     this.test[this.test.length-1], 
-        //     matrix[positionX+1][positionY], 
-        //     'y',
-        //   );
-        // }
+        shapeCoordinates.push([positionX + 1, positionY]);
       } else {
         positionY++;
         positionX--;
         i--;
-        this.test.push([positionX + 1, positionY]);
+        shapeCoordinates.push([positionX + 1, positionY]);
       }
     }
 
@@ -439,30 +400,13 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       positionY = i;
       
       if (matrix[positionX][positionY]) {
-        this.test.push([positionX + 1, positionY + 1]);
-        
-        // if(matrix[positionX]) {
-        //   this.checkIfVectorHasBeenChanged(
-        //     this.test[this.test.length-2], 
-        //     this.test[this.test.length-1], 
-        //     matrix[positionX][positionY+1],
-        //     'x',
-        //     );
-        // }
+        shapeCoordinates.push([positionX + 1, positionY + 1]);
       } else {
         positionX--;
         positionY--;
         i--;
 
-        this.test.push([positionX + 1, positionY + 1]);
-        // if(matrix[positionX-1]) {
-        //   this.checkIfVectorHasBeenChanged(
-        //     this.test[this.test.length-2],
-        //     this.test[this.test.length-1], 
-        //     matrix[positionX-1][positionY-1],
-        //     'y'
-        //   );
-        // }
+        shapeCoordinates.push([positionX + 1, positionY + 1]);
       }
     }
 
@@ -470,13 +414,13 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       positionX = i;
       
       if(matrix[positionX][positionY]) {
-        this.test.push([positionX, positionY + 1]);
+        shapeCoordinates.push([positionX, positionY + 1]);
       } else {
         positionX++;
         positionY--;
         i++;
         
-        this.test.push([positionX, positionY + 1]);
+        shapeCoordinates.push([positionX, positionY + 1]);
       }
     }
 
@@ -484,71 +428,63 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       positionY = i;
 
       if(matrix[positionX][positionY]) {
-        this.test.push([positionX, positionY]);
-        
-        // if(matrix[positionX]) {
-        //   this.checkIfVectorHasBeenChanged(
-        //     this.test[this.test.length-2],
-        //     this.test[this.test.length-1], 
-        //     matrix[positionX][positionY-1],
-        //     'x'
-        //   );
-        // }
+        shapeCoordinates.push([positionX, positionY]);
       } else {
         positionX++;
         positionY++;
         i++;
-        this.test.push([positionX, positionY]);
+        shapeCoordinates.push([positionX, positionY]);
       }
     }
-
-    console.log(this.test);
-
-    this.test.forEach(([xPos, yPos])=> {
-      let radius = 0.8;
-      // shape.lineTo(xPos, yPos);
-      // shape.bezierCurveTo(xPos, yPos*radius, xPos, yPos, xPos+xPos*radius, yPos);
-    });
-
-    const vectorsArray = [];
-
     
-    this.test.forEach((value, index) => {
-      if (index === this.test.length-1) {
+    shapeCoordinates.forEach((value, index) => {
+      if (index === shapeCoordinates.length-1) {
         return;
       }
-      let a = new THREE.Vector3(value[0], value[1], 0);
-      let b = new THREE.Vector3(this.test[index+1][0], this.test[index+1][1], 0);
-      const dir = new THREE.Vector3()
-      const lala = dir.subVectors(b, a).normalize();
-      vectorsArray.push(lala);
-    });
 
-    console.log(vectorsArray);
-    
+      const v1 = new THREE.Vector3(value[0], value[1], 0);
+      const v2 = new THREE.Vector3(shapeCoordinates[index+1][0], shapeCoordinates[index+1][1], 0);
+      const dir = new THREE.Vector3()
+      vectorsArray.push(dir.subVectors(v2,v1).normalize());
+    });
     
     let xPos = 0;
     let yPos = 0;
-    let radius = 0.2;
-
+    
     vectorsArray.forEach((vector: THREE.Vector3, index)=> {
       xPos = xPos + vector.x;
       yPos = yPos + vector.y;
-      if (index === vectorsArray.length - 1 || vector.equals(vectorsArray[index + 1])) {
+      if (index === vectorsArray.length - 1) {
+        shape.lineTo(xPos, yPos+radius);
+        shape.bezierCurveTo(xPos, yPos+radius, xPos, yPos, xPos+radius, yPos);
+        return;
+      }
+
+      if (vector.equals(vectorsArray[index + 1])) {
         shape.lineTo(xPos, yPos);
       } else {
-        shape.lineTo(xPos, yPos);
-        if(vectorsArray[index + 1].y) {
-            // shape.lineTo(xPos, yPos - yPos*radius);
-            // shape.bezierCurveTo(xPos, yPos - yPos*radius, xPos, yPos, xPos + xPos*radius, yPos);
-          }
+        if(vectorsArray[index].x === 1 && vectorsArray[index + 1].y  === 1) {
+          shape.lineTo(xPos-radius, yPos);
+          shape.bezierCurveTo(xPos-radius, yPos, xPos, yPos, xPos, yPos+ radius);
         }
-      })
+
+        if(vectorsArray[index].x === -1 && vectorsArray[index + 1].y  === 1) {
+          shape.lineTo(xPos+radius, yPos);
+          shape.bezierCurveTo(xPos+radius, yPos, xPos, yPos, xPos, yPos+ radius);
+        }
+
+        if(vectorsArray[index + 1].x === -1) {
+          shape.lineTo(xPos,  yPos - radius);
+          shape.bezierCurveTo(xPos,  yPos - radius, xPos, yPos, xPos-radius, yPos);
+        }
+
+        if(vectorsArray[index].x === -1  && vectorsArray[index + 1].y === -1) {
+          shape.lineTo(xPos+radius,  yPos);
+          shape.bezierCurveTo(xPos+radius,  yPos, xPos, yPos, xPos, yPos-radius);
+        }
+      }
+    })
       
-      //   // shape.lineTo(xPos, yPos - yPos*radius);
-      //   // shape.lineTo(0, );
-      //   // shape.bezierCurveTo(xPos, yPos - yPos*radius, xPos, yPos, xPos*radius, yPos);
-    
     const extrudeSettings = {
       steps: 0, 
       depth: 0,
@@ -560,26 +496,7 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     };
 
     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-
-    const material = new THREE.MeshLambertMaterial({
-      color: new THREE.Color("#000000").clone(),
-    });
-
-    const boxMesh = new THREE.Mesh(geometry, material);
-    boxMesh.rotateX(Math.PI/2);
-    this.scene.add(boxMesh);
-  }
-
-  public checkIfVectorHasBeenChanged(previousPoint: number[], currentPoint: number[], nextCellExists, incrementDirection: 'x' | 'y') {
-    if(incrementDirection === 'y') {
-      if(previousPoint[1] === currentPoint[1] && nextCellExists){
-        this.test.pop();
-      }
-    } else {
-      if(previousPoint[0] === currentPoint[0] && nextCellExists){
-        this.test.pop();
-      }
-    }
+    return geometry;
   }
 
   public getMapConfiguration(): Promise<any> {
