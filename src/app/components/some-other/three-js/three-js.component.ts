@@ -9,7 +9,7 @@ import * as TWEEN from 'tween.js/src/Tween.js'
 enum InitialColorsEnum {
   darkRed  = '#ff897d',
   lightRed = '#ffadae',
-  veryLightRed = '',
+  lightGreen = '#95ffcc',
 }
 
 @Component({
@@ -36,9 +36,13 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
 
   public boothGroupArray: THREE.Object3D[] = [];
 
+  public elementsToChangeColor: THREE.Object3D[] = [];
+
   public mouse: THREE.Vector2;
   
   public raycaster: THREE.Raycaster;
+
+  public lastIntersected: THREE.Object3D;
 
   constructor(
     private http: HttpClient,
@@ -167,27 +171,25 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
     this.raycaster.setFromCamera( this.mouse, this.camera );
 
     let intersects = this.raycaster.intersectObjects( this.boothGroupArray , true );
-    
-    let lastIntersected: THREE.Object3D;
 
     if (intersects.length > 0) {
       const intersectedGroup: THREE.Object3D = this.boothGroupArray.find((array) => intersects[0].object.parent.uuid === array.uuid);
-      if(intersectedGroup && intersectedGroup.uuid) {
-        if (lastIntersected && intersectedGroup.uuid !== lastIntersected.uuid ) {
-          console.log('////'+lastIntersected.uuid,'/////'+ intersectedGroup.uuid);
-          lastIntersected.userData.scaleDown(lastIntersected);
+      
+      if(intersectedGroup && intersectedGroup.userData.id) {
+        if (this.lastIntersected && intersectedGroup.userData.id !== this.lastIntersected.userData.id ) {
+          this.lastIntersected.userData.scaleDown(this.lastIntersected);
         }
 
-        lastIntersected = intersectedGroup;
-        lastIntersected.userData.scaleUp(lastIntersected);
+        this.lastIntersected = intersectedGroup;
+        this.lastIntersected.userData.scaleUp(this.lastIntersected);
       } else {
-        lastIntersected = null;
+        this.lastIntersected = null;
       }
     }  else {
-      if (lastIntersected) {
-        lastIntersected.userData.scaleDown(lastIntersected);
+      if (this.lastIntersected) {
+        this.lastIntersected.userData.scaleDown(this.lastIntersected);
       }
-      lastIntersected = null;
+      this.lastIntersected = null;
     }
 
     this.renderer.render( this.scene, this.camera );
@@ -293,52 +295,59 @@ export class ThreeJsComponent implements OnInit, AfterViewInit {
       }
     });
     redSmallBox.colorsNeedUpdate = true;
+    
     const redSmallBoxMesh = new THREE.Mesh(redSmallBox,  new THREE.MeshBasicMaterial( { color: InitialColorsEnum.lightRed, vertexColors: true } ));
-
     redSmallBoxMesh.position.set(boothWidth*0.5, 0.50, boothHeight*0.55);
     this.animatedElements.push(redSmallBoxMesh);
     boothGroup.add(redSmallBoxMesh);
-
+    this.elementsToChangeColor.push(redSmallBoxMesh);
     
     const redSmallBoxMesh2 = redSmallBoxMesh.clone();
     redSmallBoxMesh2.position.set(boothWidth*0.5, 0.35, boothHeight*0.55);
     this.animatedElements.push(redSmallBoxMesh2)
     boothGroup.add(redSmallBoxMesh2);
+    this.elementsToChangeColor.push(redSmallBoxMesh2);
 
     const redBoxTransparent = new THREE.BoxGeometry( boothHeight*0.17, boothHeight*0.5, boothHeight*0.17 );
     const redBoxTransparentMesh = new THREE.Mesh(redBoxTransparent,  new THREE.MeshBasicMaterial( { color: InitialColorsEnum.lightRed, vertexColors: true, opacity: 0.5, transparent: true } ));
-    redBoxTransparentMesh.position.set(boothWidth*0.5, 0.18+boothHeight*0.25, boothHeight*0.55)
-    redBoxTransparentMesh.userData = {
-      colorToChangeOnHover: '#95ffcc',
-    }
+    redBoxTransparentMesh.position.set(boothWidth*0.5, 0.18+boothHeight*0.25, boothHeight*0.55);
+    this.elementsToChangeColor.push(redBoxTransparentMesh);
     
+    // const blueBoxTransparentBorder = new THREE.BoxGeometry(  boothHeight*0.18, boothHeight*0.01, boothHeight*0.18 );
+    // const blueBoxGroundBorderMesh = this.createMesh('#89b2f1', blueBoxTransparentBorder, 0, 0, 0, false);
+    // blueBoxGroundBorderMesh.position.set(boothWidth*0.5, 0.22, boothHeight*0.55);
+    // boothGroup.add(blueBoxGroundBorderMesh);
+    // this.elementsToChangeColor.push(blueBoxGroundBorderMesh);
+    
+    const redBoxTransparentBorder = new THREE.BoxGeometry(  boothHeight*0.16, boothHeight*0.01, boothHeight*0.16 );
+    const redBoxGroundBorderMesh = this.createMesh(InitialColorsEnum.darkRed, redBoxTransparentBorder, 0, 0, 0, false);
+    redBoxGroundBorderMesh.position.set(boothWidth*0.5, 0.22, boothHeight*0.55);
+    boothGroup.add(redBoxGroundBorderMesh);
+    this.elementsToChangeColor.push(redBoxGroundBorderMesh);
+
     boothGroup.add(redBoxTransparentMesh);
     boothGroup.userData = {
       url: booth.url,
+      id: this.boothGroupArray.length + 1,
       scaleUp:(bth:THREE.Object3D) =>{
-        // console.log("scaleUp"+bth);
-        bth.scale.set(1.1,1,1.1)
-        // if (h.userData.scaleDownTween) h.userData.scaleDownTween.stop();
-        // let initScale = h.scale.clone();
-        // let finalScale = new THREE.Vector3().setScalar(2);
-        // h.userData.scaleUpTween = new TWEEN.Tween(initScale).to(finalScale, 500).onUpdate(function(obj) {
-        //   h.scale.copy(obj)
-        // }).start();
+        bth.scale.set( 1.05, 1 ,1.05 );
+
+        this.elementsToChangeColor.forEach((element: THREE.Mesh)=> {
+          bth.children.filter((mesh)=> mesh.uuid === element.uuid).forEach((mesh)=> {
+            mesh.material.color.set(InitialColorsEnum.lightGreen)
+          })
+        })
       },
 
       scaleDown: (bth) => {
-        // console.log("scaleDown"+bth);
-        bth.scale.set(0.9,1,0.9)
-
-        // if (h.userData.scaleUpTween) h.userData.scaleUpTween.stop();
-        // let initScale = h.scale.clone();
-        // let finalScale = new THREE.Vector3().setScalar(1);
-        // h.userData.scaleUpTween = new TWEEN.Tween(initScale).to(finalScale, 500).onUpdate(function(obj) {
-        //   h.scale.copy(obj)
-        // }).start();
+        bth.scale.set( 1, 1, 1 );
+        this.elementsToChangeColor.forEach((element: THREE.Mesh)=> {
+          bth.children.filter((mesh)=> mesh.uuid === element.uuid).forEach((mesh)=> {
+            mesh.material.color.set(InitialColorsEnum.lightRed)
+          })
+        })
       },
     } 
-
     this.boothGroupArray.push(boothGroup);
 
     return boothGroup;
